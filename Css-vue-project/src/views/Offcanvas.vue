@@ -18,9 +18,11 @@
       </div>
       <div class="offcanvas-body">
         <ul class="list-unstyled">
-          <li><a href="#section1" class="text-decoration-none">链接 1</a></li>
-          <li><a href="#section2" class="text-decoration-none">链接 2</a></li>
-          <li><a href="#section3" class="text-decoration-none">链接 3</a></li>
+          <li><router-link to="/" class="text-decoration-none">首页</router-link></li>
+          <li><router-link to="/category/:category" class="text-decoration-none">分类</router-link></li>
+          <li><router-link to="/video/:id" class="text-decoration-none">视频播放</router-link></li>
+          <li><router-link to="/auth" class="text-decoration-none">登录 / 注册</router-link></li>
+          <li><router-link to="/profile" class="text-decoration-none">个人资料</router-link></li>
         </ul>
       </div>
     </div>
@@ -29,6 +31,7 @@
 
 <script setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router'; // 引入 Vue Router
 </script>
 
 <style scoped>

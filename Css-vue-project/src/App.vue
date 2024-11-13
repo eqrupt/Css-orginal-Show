@@ -3,11 +3,8 @@
   <!-- 主内容区 -->
   <div class="main-content">
     <div class="container">
-      <h1>页面内容</h1>
-      <p>这是主要的页面内容...</p>
     </div>
-   <card_items></card_items>
-    <rou
+    <router-view></router-view>
   </div>
 
 </template>
