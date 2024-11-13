@@ -10,9 +10,8 @@
         </button>
       </div>
     </nav>
-
     <!-- Offcanvas 导航栏 -->
-    <div id="offcanvasExample" class="offcanvas offcanvas-start d-lg-none" tabindex="-1">
+    <div id="offcanvasExample" class="offcanvas offcanvas-start d-lg-block" tabindex="-1">
       <div class="offcanvas-header">
         <h5 class="offcanvas-title">导航菜单</h5>
         <button type="button" class="btn-close d-lg-none" data-bs-dismiss="offcanvas"></button>
@@ -34,7 +33,7 @@ import { ref } from 'vue';
 
 <style scoped>
 /* 大屏幕固定导航栏 */
-@media (min-width: 992px) { /* lg 尺寸及以上 */
+@media (max-width: 992px) { /* lg 尺寸及以上 */
   .fixed-left {
     position: fixed;
     top: 0;
@@ -43,23 +42,27 @@ import { ref } from 'vue';
     height: 100vh; /* 让导航栏充满整个高度 */
     z-index: 1045; /* 保证在内容之上 */
     background-color: #f8f9fa; /* 背景颜色 */
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }}
-.navbar-brand{
+.navbar-brand {
   writing-mode: vertical-rl;
 }
-@media (max-width: 991px) {
+@media (min-width: 993px) {
   .bg-body-tertiary {
     display: none;
   }
 }
 /* 小屏幕下，显示为 Offcanvas */
-@media (max-width: 991px) {
-  .navbar-toggler {
-    display: block;
+@media (min-width: 991px) {
+  #offcanvasExample {
+    position: fixed;
+    transform: none !important; /* 确保大屏时 Offcanvas 面板始终显示 */
+    visibility: unset !important;
   }
   .main-content {
-    margin-left: 0; /* 小屏幕时，内容不需要偏移 */
+    margin-left: 250px; /* 小屏幕时，内容不需要偏移 */
   }
 }
 </style>
