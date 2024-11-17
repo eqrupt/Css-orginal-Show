@@ -16,9 +16,6 @@ import Card from "@/components/card.vue";
 import Card_items from "@/components/card_items.vue";
 
 const selectedVideo = ref({});
-
-
-
 </script>
 
 <style scoped>

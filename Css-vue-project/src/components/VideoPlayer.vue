@@ -11,7 +11,7 @@
       </video>
       <div class="card-body">
         <h5 class="card-title">示例卡片标题</h5>
-        <p class="card-text">这是卡片的内容描述，可以添加一些更多的细节。</p>
+        Bootstrap 5 Quick Snippets
         <a href="#" class="btn btn-primary">点击这里</a>
       </div>
     </div>
