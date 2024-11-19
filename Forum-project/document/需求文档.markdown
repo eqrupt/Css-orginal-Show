@@ -1,0 +1,56 @@
+1. 我接下来要开发贴吧网站。
+2. 全部逻辑都写在前端，没有后端。
+3. 使用Vue3 + TypeScript + Pinia + VueRouter + Axios + Bootstrap5开发。
+4. 使用ddd领域驱动法进行开发。
+
+---
+1. 用户领域（User Domain）
+包含用户认证、个人信息管理等功能
+2. 贴吧领域（Forum Domain）
+包含贴吧管理、关注等功能
+3. 帖子领域（Post Domain）
+包含帖子发布、评论等功能
+4. 搜索领域（Search Domain）
+包含搜索相关功能
+---
+现在目录的形式如下：
+.
+├── public/
+│   └── vite.svg
+├── src/
+│   ├── application/           # 应用层
+│   │   ├── components/
+│   │   ├── models/
+│   │   ├── ports/
+│   │   ├── repositories/
+│   │   └── services/
+│   ├── domain/               # 领域层
+│   │   └── user/
+│   │       ├── api/
+│   │       ├── components/
+│   │       ├── store/
+│   │       └── types/
+│   ├── infrastructure/       # 基础设施层
+│   │   ├── components/
+│   │   ├── models/
+│   │   ├── ports/
+│   │   ├── repositories/
+│   │   └── services/
+│   ├── presentation/         # 表现层
+│   │   ├── components/
+│   │   ├── models/
+│   │   ├── ports/
+│   │   ├── repositories/
+│   │   └── services/
+│   ├── router/
+│   │   └── index.ts
+│   ├── views/
+│   │   ├── Home.vue
+│   │   └── NotFound.vue
+│   ├── App.vue
+│   └── main.ts
+├── package.json
+├── tsconfig.json
+└── vite.config.ts
+
+---
