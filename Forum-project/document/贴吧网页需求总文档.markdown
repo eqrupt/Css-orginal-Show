@@ -1,0 +1,56 @@
+## 核心需求
+
+用户逻辑梳理：
+在登录，注册完成后，用户会进入主页，主页会展示贴吧列表，用户可以进入贴吧，也可以创建贴吧。
+在贴吧页面，用户可以发表帖子，也可以评论帖子。
+
+## 核心领域
+
+**用户领域（User Domain）**
+- 用户实体（User Entity）
+  * 用户基本信息（ID、用户名、密码、邮箱等）
+  * 用户状态（正常、封禁等）
+  * 用户等级与积分
+- 用户认证服务（Authentication Service）
+  * 注册、登录、登出
+  * 密码加密与验证
+- 用户关系（User Relationship）
+  * 关注关系
+  * 黑名单管理
+
+贴吧领域（Forum Domain）
+- 贴吧实体（Forum Entity）
+  * 贴吧基本信息（ID、名称、简介、创建时间等）
+  * 贴吧分类
+  * 贴吧统计数据（关注人数、帖子数等）
+- 贴吧管理服务（Forum Management）
+  * 贴吧创建与审核
+  * 贴吧关注
+  * 版主管理
+
+内容领域（Content Domain）
+- 帖子实体（Post Entity）
+  * 帖子内容（标题、正文、图片等）
+  * 帖子状态（正常、删除、置顶等）
+  * 帖子统计（浏览量、点赞数等）
+- 评论实体（Comment Entity）
+  * 评论内容
+  * 评论层级关系
+- 内容互动（Interaction）
+  * 点赞、收藏
+  * 举报处理
+
+通知领域（Notification Domain）
+- 消息实体（Message Entity）
+  * 系统通知
+  * 互动通知（评论、点赞等）
+- 消息推送服务（Push Service）
+  * 消息分发
+  * 已读未读状态
+
+管理领域（Administration Domain）
+- 内容审核（Content Moderation）
+  * 贴吧审核
+  * 帖子审核
+  * 举报处理
+- 用户管理（User Management）

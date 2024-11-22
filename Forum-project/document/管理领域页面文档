@@ -1,0 +1,10 @@
+管理领域（Administration Domain）
+- 内容审核（Content Moderation）
+  * 贴吧审核
+  * 帖子审核
+  * 举报处理
+- 用户管理（User Management）
+- 经验值管理（Experience Management）
+  * 经验值规则
+  * 经验值计算
+  * 经验值排名

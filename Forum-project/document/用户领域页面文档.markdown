@@ -1,0 +1,457 @@
+
+```javascript 
+
+## 技术栈
+- Vue3
+- TypeScript
+- Pinia
+- bootstrap5
+
+## 思想
+- 组件化
+- 数据驱动视图
+- 模块化
+- 组件间通信
+
+## 实现功能
+  1. 用户注册
+  - 用户名/邮箱
+  - 密码(二次确认)
+  - 验证码
+
+  2. 登录功能
+  - 用户名/邮箱 + 密码登录
+  - 记住密码
+  - 手机验证码登录
+
+  3. 安全功能
+  - 密码加密
+  - 登录失败限制
+  - 验证码校验
+
+## 要求
+  1. 用户注册功能
+  - 用户注册表单需包含以下字段:
+    - 用户名(必填,4-16位字符)
+    - 密码(必填,8-20位,包含大小写字母和数字)
+    - 确认密码(必填,与密码一致)
+    - 邮箱(必填,符合邮箱格式)
+
+  1. 表单验证要求
+  - 实时验证:
+    - 用户名输入时检查是否已存在
+    - 密码输入时检查强度
+    - 邮箱输入时检查格式
+    - 手机号输入时检查格式
+  - 提交验证:
+    - 所有必填项不能为空
+    - 确认密码必须与密码一致
+    - 验证码必须正确
+
+  1. 交互体验
+  - 表单项验证失败时实时显示错误提示
+  - 提交时显示加载状态
+  - 注册成功后自动登录并跳转首页
+  - 注册失败显示具体错误原因
+
+
+
+
+
+## 示例规范(非常重要，请严格遵循)
+//目录结构遵守如下标准
+src/
+├── components/          # UI层：用户界面和交互
+├── services/            # 服务层：核心业务逻辑的组织与协调
+│   ├── projectA/        # 针对具体项目A的服务层模块
+│   │   ├── api/         # 与外部API交互
+│   │   ├── domain/      # 核心领域逻辑，用于将api组合起来
+│   └── projectB/        # 针对具体项目B的服务层模块
+├── types/               # 类型定义：DTO、通用类型等
+├── store/               # 可选的状态管理层（Pinia）
+├── data/                # 数据层：专注数据处理与交互
+│   ├── repositories/    # 仓储：对外提供数据访问接口，从数据源中获得数据。
+│   ├── datasource/      # 数据源：直接与外部系统交互
+
+
+凡是标注“规范”字样的内容都需要添加下面三个部分内容
+1. 输出涉及到的模型，请严格遵守数据模型中的规范。
+- UserDTO: { username: string; password: string }
+2. 输出开发时涉及的接口
+interface ILocalStorageService {
+	//请把涉及到的隐藏属性值也写在这里。
+  checkUsernameExists(username: string): boolean;
+  createUser(userDTO: UserDTO): User;
+  login(loginDTO: LoginDTO): LoginResponse;
+}
+3. 接口中方法引用的方法(要标注入参和返回值)
+			//如果没有可以忽略这一部分，方法的含义用注释打在这里
+      "checkUsernameExists(username: string): boolean": [
+      //在这里要配上引用方法的入参和入参
+        "localStorageService.login(loginDTO: LoginDTO): LoginResponse;",
+        "localStorageService.createUser(userDTO: UserDTO): User"
+      ]
+//4. 不要擅自添加其他内容。输出上面内容时请把注释标上。
+
+## 数据模型
+register.ts
+// 用户注册相关的数据模型
+// 用户基本信息
+interface User { username: string; password: string; identity: string; token: string; userStats: UserStats; }
+
+interface UserStats { experience: number; level: number; points: number; ranking: number; }
+
+interface LevelRule { level: number; minExperience: number; maxExperience: number; benefits: string[]; }
+
+interface PointsRule { action: string; points: number; dailyLimit: number; }
+
+- RegisterDTO: { username: string; password: string; identity: string }
+- LoginDTO: { username: string; password: string }
+- LoginResponse: { token: string; user: User }
+## 目录结构
+src/
+├── components/
+│   └── register/
+│       └── RegisterPage.vue      # 注册页面组件
+│   └── login/
+│       └── LoginPage.vue        # 登录页面组件
+├── services/
+│   └── auth/
+│       ├── api/
+│       │   └── registerApi.ts    # 注册相关API调用
+│       │   └── userShowTool.ts   # 用户展示工具
+│       │   └── loginApi.ts       # 登录相关API调用
+│       │   └── experienceApi.ts  # 经验值相关API调用
+│       │   └── pointsApi.ts      # 积分相关API调用
+│       └── domain/
+│           └── registerService.ts # 注册业务逻辑
+│           └── loginService.ts    # 登录业务逻辑
+        └── store/
+            └── userStore.ts        # 用户状态管理
+            └── ExperienceStore.ts  # 经验值管理 比较特殊，业务逻辑写在里面。
+            └── PointsStore.ts      # 积分管理 比较特殊，业务逻辑写在里面。
+├── types/
+│   └── auth/
+│       └── register.ts           # 用户数据相关类型定义
+
+└── data/
+    └── repositories/
+        └── userRepository.ts     # 用户数据仓储
+
+## registerService.ts
+  
+// 1. 输出涉及到的模型
+- RegisterDTO: { username: string; password: string; identity: string }
+- LoginDTO: { username: string; password: string }
+- LoginResponse: { token: string; user: User }
+
+// 2. 输出开发时涉及的接口
+interface IRegisterService {
+  register(registerDTO: RegisterDTO): User;
+  validateUsername(username: string): boolean;
+  validatePassword(password: string): boolean;
+}
+
+3. 接口中方法引用的方法
+"register(registerDTO: RegisterDTO): User": [
+  "localStorageService.checkUsernameExists(username: string): boolean",
+  "localStorageService.createUser(userDTO: UserDTO): User"
+],
+"validateUsername(username: string): boolean": [
+  // 验证用户名是否符合规范
+],
+"validatePassword(password: string): boolean": [
+  // 验证密码是否符合规范
+]
+---
+## registerLocalStorageApi.ts
+// 1. 输出涉及到的模型
+- User: { username: string; password: string; identity: string; token: string }
+- RegisterDTO: { username: string; password: string; identity: string }
+
+// 2. 输出开发时涉及的接口
+interface IRegisterLocalStorageApi {
+  checkUsernameExists(username: string): boolean;
+  createUser(userDTO: RegisterDTO): User;
+  getUsers(): User[];
+}
+
+// 3. 接口中方法引用的方法
+"checkUsernameExists(username: string): boolean": [
+  "localStorage.getItem('users'): string | null"
+],
+"createUser(userDTO: RegisterDTO): User": [
+  "localStorage.getItem('users'): string | null",
+  "localStorage.setItem('users', JSON.stringify(users))"
+],
+"getUsers(): User[]": [
+  "localStorage.getItem('users'): string | null"
+]
+
+## loginApi.ts
+// 1. 输出涉及到的模型
+- User: { username: string; password: string; identity: string; token: string }
+- LoginDTO: { username: string; password: string }
+- LoginResponse: { token: string; user: User }
+
+// 2. 输出开发时涉及的接口
+interface ILoginLocalStorageApi {
+  login(loginDTO: LoginDTO): LoginResponse;
+  checkCredentials(username: string, password: string): boolean;
+  generateToken(): string;
+  getUser(username: string): User;
+}
+
+// 3. 接口中方法引用的方法
+"login(loginDTO: LoginDTO): LoginResponse": [
+  "checkCredentials(username: string, password: string): boolean",
+  "generateToken(): string",
+  "getUser(username: string): User"
+],
+"checkCredentials(username: string, password: string): boolean": [
+  "localStorage.getItem('users'): string | null"
+],
+"generateToken(): string": [
+  "Math.random().toString(36).substring(2)"
+],
+"getUser(username: string): User": [
+  "localStorage.getItem('users'): string | null"
+]
+
+## loginService.ts
+// 作用是调用loginApi中的方法，并返回登录结果
+// 1. 输出涉及到的模型
+- User: { username: string; password: string; identity: string; token: string }
+- LoginDTO: { username: string; password: string }
+- LoginResponse: { token: string; user: User }
+
+// 2. 输出开发时涉及的接口
+interface ILoginService {
+  login(loginDTO: LoginDTO): LoginResponse;
+  validateUsername(username: string): boolean;
+  validatePassword(password: string): boolean;
+}
+
+// 3. 接口中方法引用的方法
+"login(loginDTO: LoginDTO): LoginResponse": [
+  "loginApi.login(loginDTO: LoginDTO): LoginResponse",
+  "validateUsername(username: string): boolean",
+  "validatePassword(password: string): boolean"
+],
+"validateUsername(username: string): boolean": [
+  // 验证用户名是否符合规范
+],
+"validatePassword(password: string): boolean": [
+  // 验证密码是否符合规范
+]
+
+## userStore.ts
+// 作用是调用registerService中的方法，并修改state
+// 1. 输出涉及到的模型
+- User: { username: string; password: string; identity: string; token: string }
+- RegisterDTO: { username: string; password: string; identity: string }
+
+// 2. 输出开发时涉及的接口
+interface IUserStore {
+  user: User | null;
+  isLoggedIn: boolean;
+  register(registerDTO: RegisterDTO): Promise<void>;
+  login(loginDTO: LoginDTO): Promise<void>;
+  logout(): void;
+}
+
+// 3. 接口中方法引用的方法
+"register(registerDTO: RegisterDTO)": [
+  "registerService.register(registerDTO: RegisterDTO): User",
+  "state.user = user",
+  "state.isLoggedIn = true"
+],
+"login(loginDTO: LoginDTO)": [
+  "loginService.login(loginDTO: LoginDTO): LoginResponse",
+  "state.user = loginResponse.user",
+  "state.isLoggedIn = true"
+],
+"logout()": [
+  "state.user = null",
+  "state.isLoggedIn = false"
+]
+
+
+
+
+## RegisterPage.vue
+
+// 作用是提供注册页面的UI和交互逻辑
+// 1. 输出涉及到的模型
+- RegisterDTO: { username: string; password: string; identity: string }
+
+// 2. 输出开发时涉及的接口
+interface IRegisterPage {
+  registerDTO: RegisterDTO;
+  register(): Promise<void>;
+  handleRegister(): void;
+}
+
+// 3. 接口中方法引用的方法
+"register()": [
+  "userStore.register(registerDTO: RegisterDTO): Promise<void>"
+],
+"handleRegister()": [
+  "register(): Promise<void>",
+  "router.push('/login')"
+]
+
+## LoginPage.vue
+
+// 作用是提供登录页面的UI和交互逻辑
+// 1. 输出涉及到的模型
+- LoginDTO: { username: string; password: string }
+
+// 2. 输出开发时涉及的接口
+interface ILoginPage {
+  loginDTO: LoginDTO;
+  login(): Promise<void>;
+  handleLogin(): void;
+}
+
+// 3. 接口中方法引用的方法
+"login()": [
+  "userStore.login(loginDTO: LoginDTO): Promise<void>"
+],
+"handleLogin()": [
+  "login(): Promise<void>",
+  "router.push('/')"
+]
+
+
+## pointsService.ts
+//我希望把积分业务做成观察者模式，
+// 作用是提供积分相关的业务逻辑
+// 1. 输出涉及到的模型
+- PointsRule: { action: string; points: number; dailyLimit: number }
+- UserStats: { experience: number; level: number; points: number; ranking: number }
+
+// 2. 输出开发时涉及的接口
+interface IPointsService {
+  // 根据行为类型计算获得的积分数
+  calculatePoints(action: string): number;
+  // 更新用户积分,返回更新后的用户统计数据
+  updateUserPoints(username: string, points: number): UserStats;
+  // 检查用户当日该行为是否超出限制次数
+  checkDailyLimit(username: string, action: string): boolean;
+  // 获取所有积分规则
+  getPointsRules(): PointsRule[];
+  //
+}
+
+// 3. 接口中方法引用的方法
+"calculatePoints(action: string): number": [
+  "pointsApi.getPointsRule(action: string): PointsRule"
+],
+"updateUserPoints(username: string, points: number): UserStats": [
+  "pointsApi.getUserStats(username: string): UserStats",
+  "pointsApi.updateUserStats(username: string, stats: UserStats): UserStats"
+],
+"checkDailyLimit(username: string, action: string): boolean": [
+  "pointsApi.getDailyActionCount(username: string, action: string): number",
+  "pointsApi.getPointsRule(action: string): PointsRule"
+],
+"getPointsRules(): PointsRule[]": [
+  "pointsApi.getAllPointsRules(): PointsRule[]"
+]
+## ExperienceStore.ts
+// 作用是提供经验值相关的业务逻辑
+// 1. 输出涉及到的模型
+- UserStats: { experience: number; level: number; points: number; ranking: number }
+
+// 2. 输出开发时涉及的接口
+interface IExperienceStore {
+  // 获取用户统计数据
+  getUserStats(username: string): UserStats;
+  // 更新用户经验值,返回更新后的用户统计数据
+  updateExperience(username: string, experience: number): UserStats;
+  // 计算用户等级
+  calculateLevel(experience: number): number;
+  // 获取用户排名
+  getUserRanking(username: string): number;
+}
+
+// 3. 接口中方法引用的方法
+"getUserStats(username: string): UserStats": [
+  "experienceApi.getUserStats(username: string): UserStats"
+],
+"updateExperience(username: string, experience: number): UserStats": [
+  "experienceApi.getUserStats(username: string): UserStats",
+  "experienceApi.updateUserStats(username: string, stats: UserStats): UserStats",
+  "calculateLevel(experience: number): number"
+],
+"calculateLevel(experience: number): number": [
+  "experienceApi.getLevelRules(): LevelRule[]"
+],
+"getUserRanking(username: string): number": [
+  "experienceApi.getUserRanking(username: string): number"
+]
+
+## ExperienceApi.ts
+export interface User {
+  username: string;  // 用户名
+  password: string;  // 密码
+  identity: string;  // 身份
+  token: string;     // 令牌
+  userStats: UserStats; // 用户统计数据
+}
+
+export interface LevelRule {
+  level: number;      // 等级
+  minExperience: number;  // 所需最小经验值
+  maxExperience: number;  // 升级所需经验值
+  benefits: string[];     // 等级特权
+}
+//独立调取localStorage中的数据
+interface IExperienceStore {
+  // 从localStorage获取token，根据token获取用户经验信息
+  getExperienceByToken(token: string): UserStats;
+
+  // 获取用户统计数据
+  getUserStats(username: string): UserStats;
+
+  // 更新用户经验值,返回更新后的用户统计数据 
+  updateExperience(username: string, experience: number): UserStats;
+
+  // 计算用户等级
+  calculateLevel(experience: number): number;
+
+  // 获取用户排名
+  getUserRanking(username: string): number;
+}
+
+
+## ExperienceStore.ts
+//基于pinnai的store，封装了经验值相关的业务逻辑
+//引用了experienceApi中的方法
+interface ExperienceStoreInterface {
+  // Getters
+  currentExperience: number                    // 返回当前经验值
+  currentLevel: number                         // 返回当前等级
+  currentRanking: number                       // 返回当前排名
+  rules: LevelRule[]                          // 返回等级规则列表
+
+  // Actions
+  setCurrentUser(username: string): void       // 设置当前用户，无返回值
+  
+  getExperience(username: string): UserStats   // 返回用户统计信息
+  // 返回: { experience: number; level: number; points: number; ranking: number }
+  
+  addExperience(
+    username: string, 
+    amount: number
+  ): UserStats                                // 返回更新后的用户统计信息
+  
+  getUserLevel(username: string): number       // 返回用户等级
+  
+  getUserRanking(username: string): number     // 返回用户排名
+  
+  getLevelRules(): LevelRule[]                // 返回等级规则列表
+  // 返回: Array<{ level: number; minExperience: number; maxExperience: number; benefits: string[] }>
+}
+

@@ -4,26 +4,64 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    redirect: '/login'
-  },
-  {
-    path: '/login',
-    name: 'Login',
-    component: () => import('@/domain/user/components/LoginForm.vue'),
-    meta: {
-      title: '登录',
-      requiresAuth: false
-    }
+    redirect: '/Home'
   },
   {
     path: '/register',
     name: 'Register', 
-    component: () => import('@/domain/user/components/RegisterForm.vue'),
+    component: () => import('@/components/register/RegisterPage.vue'),
     meta: {
       title: '注册',
       requiresAuth: false
     }
   },
+  {
+    path: '/login',
+    name: 'Login',
+    component: () => import('@/components/login/LoginPage.vue'),
+    meta: {
+      title: '登录',
+      requiresAuth: false
+    }
+  },
+  
+  {
+    path: '/post/editor',
+    name: 'CreateEditor',
+    component: () => import('@/components/post/PostEditor.vue'),
+    meta: {
+      title: '发布帖子',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/post/editor/:id',
+    name: 'PostEditor',
+    component: () => import('@/components/post/PostEditor.vue'),
+    meta: {
+      title: '编辑帖子',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/post/detail/:id',
+    name: 'PostDetail',
+    component: () => import('@/components/post/PostDetail.vue'),
+    meta: {
+      title: '帖子详情',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/post/list',
+    name: 'PostList',
+    component: () => import('@/components/post/PostList.vue'),
+    meta: {
+      title: '帖子列表',
+      requiresAuth: true
+    }
+  },
+
   // 需要登录才能访问的路由
   {
     path: '/home',
