@@ -4,7 +4,16 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    redirect: '/Home'
+    redirect: '/searching/vueDraggable'
+  },
+  {
+    path: '/searching/vueDraggable',
+    name: 'VueDraggable',
+    component: () => import('@/searching/vueDraggable.vue'),
+    meta: {
+      title: '拖拽测试',
+      requiresAuth: false
+    }
   },
   {
     path: '/register',

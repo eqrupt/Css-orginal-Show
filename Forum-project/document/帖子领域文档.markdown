@@ -184,7 +184,7 @@ interface IPostService {
 - PostDTO: { 
     id: string;
     title: string; 
-    content: string;
+    content: string;s
     authorId: string;
     createTime: Date;
     updateTime: Date;
