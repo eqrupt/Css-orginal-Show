@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid">
+  <div class="container-fluid fixed-top">
     <div class="row">
       <!-- 侧边导航栏 -->
       <div class="col-md-2 bg-light sidebar">

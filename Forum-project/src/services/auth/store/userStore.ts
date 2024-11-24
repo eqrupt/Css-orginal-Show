@@ -78,11 +78,15 @@ export const useUserStore = defineStore('user', () => {
     user.value = loginResponse.user;
     isLoggedIn.value = true;
     token.value = loginResponse.token;
+    // 保存用户数据到localStorage
+    localStorage.setItem('currentUser', JSON.stringify(loginResponse.user));
   }
 
   function logout() {
     user.value = null;
     isLoggedIn.value = false;
+    // 清除localStorage中的用户数据
+    localStorage.removeItem('currentUser');
   }
 
   return {

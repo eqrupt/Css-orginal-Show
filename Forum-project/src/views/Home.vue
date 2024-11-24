@@ -32,6 +32,9 @@
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
                   <li>
+                    <router-link class="dropdown-item" to="/user-home">个人主页</router-link>
+                  </li>
+                  <li>
                     <a class="dropdown-item" href="#" @click="handleLogout">退出登录</a>
                   </li>
                 </ul>
@@ -69,7 +72,7 @@
   import { useRouter } from 'vue-router'
   
   const router = useRouter()
-  const username = ref('用户名') // 后续从store中获取
+  const username = ref(JSON.parse(localStorage.getItem('currentUser')|| '{}').username)
   
   const handleLogout = () => {
     // 清除登录信息
