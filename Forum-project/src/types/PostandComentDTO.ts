@@ -18,7 +18,7 @@
 export interface PostDTO {
   id: string;
   title: string;
-  content: string;
+  content: Sstring;
   authorId: string;
   createTime: Date;
   updateTime: Date;
