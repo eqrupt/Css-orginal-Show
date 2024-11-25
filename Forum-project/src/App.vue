@@ -22,6 +22,11 @@
             <router-link to="/post/list" class="list-group-item list-group-item-action">
               帖子列表
             </router-link>
+            <template v-if="isAdmin">
+              <router-link to="/admin" class="list-group-item list-group-item-action">
+                管理界面
+              </router-link>
+            </template>
             <a href="#" class="list-group-item list-group-item-action" @click.prevent="logout">
               退出登录
             </a>
@@ -43,10 +48,17 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const token = ref<string | null>(null)
+const isAdmin = ref<boolean>(false)
 
 const checkLoginStatus = () => {
   token.value = localStorage.getItem('token')
+  const currentUser = localStorage.getItem('currentUser')
+  if (currentUser) {
+    const user = JSON.parse(currentUser)
+    isAdmin.value = user.identity === 'admin'
+  }
 }
+
 watch(() => router.currentRoute.value, () => {
   checkLoginStatus()
 })
@@ -55,6 +67,7 @@ const logout = () => {
   localStorage.removeItem('token')
   localStorage.removeItem('currentUser')
   token.value = null
+  isAdmin.value = false
   router.push('/login')
 }
 

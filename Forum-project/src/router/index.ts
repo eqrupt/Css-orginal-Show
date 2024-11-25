@@ -16,6 +16,42 @@ const routes: RouteRecordRaw[] = [
     }
   },
   {
+    path: '/admin',
+    name: 'Admin',
+    component: () => import('@/services/manage/Manage.vue'),
+    meta: {
+      title: '管理界面',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/manage/users',
+    name: 'ManageUsers',
+    component: () => import('@/services/manage/users.vue'),
+    meta: {
+      title: '用户管理',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/manage/posts', 
+    name: 'ManagePosts',
+    component: () => import('@/services/manage/posts.vue'),
+    meta: {
+      title: '帖子管理',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/manage/comments',
+    name: 'ManageComments', 
+    component: () => import('@/services/manage/comment.vue'),
+    meta: {
+      title: '评论管理',
+      requiresAuth: true
+    }
+  },
+  {
     path: '/user-home',
     name: 'UserHome', 
     component: () => import('@/components/UserHome.vue'),
