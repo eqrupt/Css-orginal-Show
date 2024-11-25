@@ -62,6 +62,30 @@ interface ILoginPage {
                   密码必须是6-20位,只包含大小写字母和数字
                 </div>
               </div>
+              <div class="mb-3">
+                <label for="captcha" class="form-label">验证码</label>
+                <div class="d-flex align-items-center">
+                  <input
+                    type="text"
+                    class="form-control me-2"
+                    :class="{ 'is-invalid': captchaError }"
+                    id="captcha"
+                    v-model="inputCaptcha"
+                    placeholder="请输入验证码"
+                    required
+                  >
+                  <canvas 
+                    ref="captchaCanvas"
+                    width="100"
+                    height="40"
+                    @click="refreshCaptcha"
+                    style="cursor: pointer;"
+                  ></canvas>
+                </div>
+                <div class="invalid-feedback" v-if="captchaError">
+                  验证码错误
+                </div>
+              </div>
               <div class="d-grid">
                 <button 
                   type="submit" 
@@ -92,7 +116,11 @@ const userStore = useUserStore()
 const loading = ref(false)
 const usernameError = ref(false)
 const passwordError = ref(false)
+const captchaError = ref(false)
 const loginService = getLoginService()
+const captchaCanvas = ref<HTMLCanvasElement | null>(null)
+const captchaText = ref('')
+const inputCaptcha = ref('')
 
 const loginDTO = reactive<LoginDTO>({
   username: '',
@@ -107,6 +135,63 @@ const validatePassword = () => {
   passwordError.value = !loginService.validatePassword(loginDTO.password)
 }
 
+const generateCaptcha = () => {
+  const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+  let result = ''
+  for (let i = 0; i < 4; i++) {
+    result += chars[Math.floor(Math.random() * chars.length)]
+  }
+  return result
+}
+
+const drawCaptcha = () => {
+  if (!captchaCanvas.value) return
+  const ctx = captchaCanvas.value.getContext('2d')
+  if (!ctx) return
+
+  // 生成新的验证码
+  captchaText.value = generateCaptcha()
+
+  // 清空画布
+  ctx.fillStyle = '#f0f0f0'
+  ctx.fillRect(0, 0, 100, 40)
+
+  // 绘制验证码
+  ctx.font = '24px Arial'
+  ctx.fillStyle = '#333'
+  ctx.textBaseline = 'middle'
+  
+  // 随机旋转每个字符
+  for (let i = 0; i < captchaText.value.length; i++) {
+    const x = 20 + i * 20
+    const y = 20
+    ctx.save()
+    ctx.translate(x, y)
+    ctx.rotate((Math.random() - 0.5) * 0.4)
+    ctx.fillText(captchaText.value[i], -5, 0)
+    ctx.restore()
+  }
+
+  // 添加干扰线
+  for (let i = 0; i < 3; i++) {
+    ctx.beginPath()
+    ctx.moveTo(Math.random() * 100, Math.random() * 40)
+    ctx.lineTo(Math.random() * 100, Math.random() * 40)
+    ctx.strokeStyle = `rgb(${Math.random() * 255},${Math.random() * 255},${Math.random() * 255})`
+    ctx.stroke()
+  }
+}
+
+const refreshCaptcha = () => {
+  drawCaptcha()
+  inputCaptcha.value = ''
+  captchaError.value = false
+}
+
+const validateCaptcha = () => {
+  return inputCaptcha.value.toLowerCase() === captchaText.value.toLowerCase()
+}
+
 const login = async () => {
   try {
     loading.value = true
@@ -118,15 +203,17 @@ const login = async () => {
     loading.value = false
     // 设置当前用户
     await useExperienceStore().setCurrentUser(loginDTO.username)
-  // 登录成功后跳转到首页
-  router.push('/home')
+    // 登录成功后跳转到首页
+    router.push('/home')
   }
 }
 
 const handleLogin = () => {
   validateUsername()
   validatePassword()
-  if (!usernameError.value && !passwordError.value) {
+  captchaError.value = !validateCaptcha()
+  
+  if (!usernameError.value && !passwordError.value && !captchaError.value) {
     login()
   }
 }
@@ -138,6 +225,7 @@ onMounted(() => {
   users.forEach((user: any) => {
     console.log(`用户名: ${user.username}, 密码: ${user.password}, 身份: ${user.identity}`)
   })
+  drawCaptcha()
 })
 
 </script>
